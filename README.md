@@ -16,15 +16,17 @@ Recomendo que aplique os exemplos que temos nesse repositório e também faça s
   - [Meta-caracteres](#meta-caracteres)
     - [Conjuntos](#conjuntos)
     - [Abreviações](#abreviações)
-    - [Âncoras `^ $ \b`](#âncoras--b)
-    - [Multiplicadores `{min,max} e *`](#multiplicadores-minmax-e-)
-    - [Ou `|`](#ou-|)
-    - [Multiplicador `+`](#multiplicador-)
+    - [Âncoras `^ $ \b`](#âncoras---b)
+    - [Quantificadores, Multiplicadores `{min,max}``](#quantificadores-multiplicadores-minmax)
+    - [Operadores de repetição `* + ?`](#operadores-de-repetição)
+    - [Ou `|`](#ou)
+    - [Grupos `( )` ](#grupos)
+    - [Grupos sem captura `(?:...)`](#grupos-sem-captura)
   - [Lookahead e Lookbehind](#lookahead-e-lookbehind)
-    - [Lookahead Positivo `(?=...)`](#lookahead-positivo-)
-    - [Lookahead Negativo `(?!...)`](#lookahead-negativo-)
-    - [Lookbehind Positivo `(?<=...)`](#lookbehind-positivo-)
-    - [Lookbehind Negativo `(?<!...)`](#lookbehind-negativo-)
+    - [Lookahead Positivo `(?=...)`](#lookbehind-positivo)
+    - [Lookahead Negativo `(?!...)`](#lookahead-negativo)
+    - [Lookbehind Positivo `(?<=...)`](#lookbehind-positivo)
+    - [Lookbehind Negativo `(?<!...)`](#lookbehind-negativo)
 - [Aplicando no Python](#aplicando-no-python)
   - [Importando o ReGex](#importando-o-regex)
     - [Usando o `re.compile`](#usando-o-recompile)
@@ -168,15 +170,20 @@ A seguir podemos ver a tabela que demonstra o Meta-Caracter e sua descrição:
 
 ### Conjuntos `[ ]`
 
-Os conjuntos [ ] em expressões regulares são utilizados para especificar um conjunto de caracteres possíveis em determinada posição na string. Por exemplo:
+-----------
+
+Os conjuntos `[ ]` em expressões regulares são utilizados para especificar um conjunto de caracteres possíveis em determinada posição na string. Por exemplo:
 
 [aeiou] corresponde a qualquer vogal minúscula.
 [A-Za-z] corresponde a qualquer letra maiúscula ou minúscula.
 [0-9] corresponde a qualquer dígito de 0 a 9.
 Além disso, podemos utilizar quantificadores dentro dos conjuntos, como +, *, {n,m}, para indicar repetições dos caracteres no conjunto.
 
+[Veja exemplos em Python aqui](examples/conjuntos/)
 
 ### Abreviações
+
+----------
 
 |Abreviação|Descrição|
 |:----:|----|
@@ -200,6 +207,8 @@ Agora vamos pegar um """conjunto negação""" do `\d` o `\D` maiúsculo, que rep
 
 ### Âncoras `^ $ \b`
 
+-----------
+
 As âncoras `^`, `$` e `\b` têm funções específicas em expressões regulares:
 
 - `^`: Especifica o início de uma linha.
@@ -213,45 +222,176 @@ As âncoras `^`, `$` e `\b` têm funções específicas em expressões regulares
 
 <small>O comando `\b` é extremamente útli, contudo ele não representa engloba os conjuntos dos caracteres especias, como `$ # @ ...`, uma das formas possíveis para contornar isso é utilizar a estrutura de lookhead: `(?!\s)text_here(?=\s|$)`</small>
 
-### Multiplicadores `{min,max} e *`
+[Veja exemplos em Python aqui](examples/ancoras/)
 
-Os multiplicadores {min,max} e * são usados para especificar a quantidade de repetições de um padrão na string.
+### Quantificadores, Multiplicadores `{min,max}`
+
+-----------
+
+Os Quantificar {min,max} é utilizado para especificar a quantidade de repetições de um padrão na string.
 
 {min,max}: Especifica que o padrão anterior deve ocorrer no mínimo "min" vezes e no máximo "max" vezes.
 
 Exemplo: a{2,4} corresponde a "aa", "aaa" ou "aaaa".
-*: Corresponde a 0 ou mais repetições do padrão anterior.
 
-Exemplo: ba* corresponde a "b", "ba", "baa", "baaa", etc.
-Esses multiplicadores ao encontrar repetições em um padrão da expressão regular.
+[Veja exemplos em Python aqui](examples/multiplicadores/)
+
+### Operadores de repetição `* + ?`
+
+-------------
+
+Os Operadores de repetição, também são quantificadores mas que possuem um intervalo fechado, são eles: ``* + ?`, suas características podem ser descritas como:
+
+| operadores | número de repetições | Intervalo |
+|--------|---------------|-----------|
+| `*`   | Zero a mais vezes | [0,n] |
+| `+`   | Uma ou mais vezes | [1,n] |
+| `?`   | Zero ou pelo menos uma vez | [0,1]|
+
+
+
+**Operador `*`**: Corresponde a 0 ou mais repetições do padrão anterior.
+
+- Exemplo: `ba*` corresponde a "b", "ba", "baa", "baaa", etc.
+
+Esses operador é útil e flexível visto que não é necessário especificar a quantidade máxima de repetições.
+
+**Operador `+`**: é usado para especificar que o padrão anterior deve ocorrer pelo menos uma vez, mas pode se repetir indefinidamente.
+
+- Exemplo: `a+` corresponde a "a", "aa", "aaa", etc., mas não corresponde a uma string vazia.
+
+Use para garantir que pelo menos uma repetição de um padrão ocorra na string.
+
+**Operador `?`**: é usado para especificar que o padrão anterior é opcional, ou seja, pode ocorrer zero ou uma vez na string.
+
+- Exemplo: `colou?r` corresponde a "color" e "colour".
+
+O operador `?` é útil para lidar com casos em que um caractere ou padrão pode estar presente ou não na string, tornando a expressão regular mais flexível e abrangente.
+
+[Veja exemplos em Python aqui](examples/operadores_repeticao/)
 
 ### Ou `|`
+
+-----------
 
 O operador | (pipe) é utilizado para especificar alternativas em uma expressão regular. Ele funciona como uma operação de "ou", onde a expressão corresponde a qualquer uma das alternativas separadas pelo pipe.
 
 Exemplo: gato|cachorro corresponde a "gato" ou "cachorro".
 O uso do operador | é útil para criar expressões regulares mais flexíveis e abrangentes, permitindo combinar diferentes padrões em uma única expressão.
 
+[Veja exemplos em Python aqui](examples/operador_ou/)
 
-### Multiplicador `+`
+### Grupos `( )` 
 
-O multiplicador `+` é usado para especificar que o padrão anterior deve ocorrer pelo menos uma vez, mas pode se repetir indefinidamente.
+---------
 
-- Exemplo: `a+` corresponde a "a", "aa", "aaa", etc., mas não corresponde a uma string vazia.
-
-Use para garantir que pelo menos uma repetição de um padrão ocorra na string.
-
-## Quantificador `?`
-
-O quantificador `?` é usado para especificar que o padrão anterior é opcional, ou seja, pode ocorrer zero ou uma vez na string.
-
-- Exemplo: `colou?r` corresponde a "color" e "colour".
-
-O quantificador `?` é útil para lidar com casos em que um caractere ou padrão pode estar presente ou não na string, tornando a expressão regular mais flexível e abrangente.
+Os grupos `( )` são utilizados para agrupar partes da expressão, permitindo aplicar operadores ou quantificadores a esses grupos como uma unidade e também permitem agrupar palavras, de forma forma que possbilita criar subestruturas
 
 
+- **Exemplo de subestrutura**: 
+  Imagine a seguinte pattern: `r"(enfermeir)([oa])"`
 
-Claro, vou adicionar um capítulo para lookahead e lookbehind em expressões regulares.
+  texto:
+  ```
+  "enfermeiro, enfermeira"
+  ```
+
+  saída:
+  ```
+  [('enfermeir', 'o'), ('enfermeir', 'a')]
+  ```
+
+- **Exemplo com operadores**: 
+
+  Ao usar um operador, caso não seja especificado dentro de um grupo, podemos dar um `match` indesejado com nossa `pattern`, veja o seguinte exemplo:
+
+  pattern: `\d{2}:\d{2}pm|am`
+
+  texto:
+  ```
+  10:00pm
+  17:50hs
+  08:20am
+  ``` 
+
+  **match esperado:**
+
+  <mark>10:00</mark><mark style="background: #00ced1">pm</mark>
+
+  17:50hs
+
+  <mark>08:20</mark><mark style="background: #00ced1">am</mark>
+
+  <br>
+
+  **match alcançado:**
+
+  <mark>10:00pm</mark>
+
+  17:50hs
+
+  08:20<mark>am</mark>
+
+  *legenda:*
+
+  <mark>Group 1</mark>
+
+  <mark style="background: #00ced1">Group 2</mark>
+
+  **Agora vamos usar os grupos**:
+
+  ------
+
+    pattern: `\d{2}:\d{2}(pm|am)`
+
+    **match esperado:**
+
+    <mark>10:00</mark><mark style="background: #00ced1">pm</mark>
+
+    17:50hs
+
+    <mark>08:20</mark><mark style="background: #00ced1">am</mark>
+
+    <br>
+
+    **match alcançado:**
+
+    <mark>10:00</mark><mark style="background: #00ced1">pm</mark>
+
+    17:50hs
+
+    <mark>08:20</mark><mark style="background: #00ced1">am</mark>
+
+  --------
+
+  Mas algumas dúvidas ainda podem surgir, afinal conseguimos o match que desejado, mas eles estão divididos em dois grupos. É possível eu usar grupos e ainda sim *"Não capturar os grupos"*? Ou em outras palavras, só ter o match sem o grupo. Sim é possível! para isso, vamos utilizar o estrutura de não captura `(?:...)`
+
+[Veja exemplos em Python aqui](examples/grupos/)
+
+### Grupos sem captura `(?:...)`
+
+-----------
+
+Para se fazer um grupo de não captura devemos utilizar os meta caracteres `?:` juntos e contidos nos grupos `( )`, dessa forma o grupo que serviu para multiplicadores ou outros operadores, não será considerado, veja o exemplo usando o caso anterior:
+
+pattern: `\d{2}:\d{2}(?:pm|am)`
+
+texto:
+```
+10:00pm
+17:50hs
+08:20am
+``` 
+
+**match esperado:**
+
+<mark>10:00pm</mark>
+
+17:50hs
+
+<mark>08:20am</mark>
+
+[Veja exemplos em Python aqui](examples/grupos_sem_captura/)
 
 ## Lookahead e Lookbehind
 
@@ -259,11 +399,15 @@ Lookahead e lookbehind são uma estruturas que permitem fazer correspondências 
 
 ### Lookahead Positivo `(?=...)`
 
+----------
+
 O lookahead positivo é representado por `(?=...)` e é usado para fazer correspondência apenas se o padrão dentro do lookahead for encontrado à frente da posição atual na string, sem consumir caracteres na correspondência.
 
 - Exemplo: `foo(?=bar)` corresponde a "foo" apenas se seguido por "bar", mas "bar" não é incluído na correspondência.
 
 ### Lookahead Negativo `(?!...)`
+
+--------
 
 O lookahead negativo é representado por `(?!...)` e é usado para fazer correspondência apenas se o padrão dentro do lookahead não for encontrado à frente da posição atual na string, sem consumir caracteres na correspondência.
 
@@ -271,16 +415,24 @@ O lookahead negativo é representado por `(?!...)` e é usado para fazer corresp
 
 ### Lookbehind Positivo `(?<=...)`
 
+------------
+
 O lookbehind positivo é representado por `(?<=...)` e é usado para fazer correspondência apenas se o padrão dentro do lookbehind for encontrado atrás da posição atual na string, sem consumir caracteres na correspondência.
 
 - Exemplo: `(?<=foo)bar` corresponde a "bar" apenas se precedido por "foo", mas "foo" não é incluído na correspondência.
 
 ### Lookbehind Negativo `(?<!...)`
 
+----------
+
 O lookbehind negativo é representado por `(?<!...)` e é usado para fazer correspondência apenas se o padrão dentro do lookbehind não for encontrado atrás da posição atual na string, sem consumir caracteres na correspondência.
 
 - Exemplo: `(?<!foo)bar` corresponde a "bar" apenas se não precedido por "foo".
 
+
+[Veja exemplos em Python aqui](examples/lookahead-lookbehind/)
+
+<br>
 
 # Aplicando no Python
 
